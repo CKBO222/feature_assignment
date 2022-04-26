@@ -101,7 +101,7 @@ async function getObjects(ticker, start, end) {
 				expire = end + " ";
 			}
 
-			
+			//Returns the dates, bid, and ask price.  Needs to be called in a loop because the dates require the differen exp dates.
 			let dbaContents = await db.query('CALL GetDatesBidAsk(?, ?, ?);', [
 				optId,
 				begin,
@@ -161,10 +161,10 @@ async function getObjects(ticker, start, end) {
 			end
 		]);
 
-		let indexes = await Promise.all(helper.dataReception(splitFactorContents, strikeContents, datesBidAskContents, dataContents, idAndIssuerContents, expContents, lContents[0], exDates));
+		//This will do the excel conversions
+		let indexes = await Promise.all(helper.dataReception(splitFactorContents, strikeContents, datesBidAskContents, dataContents, lContents[0], exDates));
 
 		return indexes;
-	//	return {strikeContents, datesBidAskContents, dataContents, idAndIssuerContents, expContents, liborContents};
 
 	} catch (err) {
 		console.log(err);
