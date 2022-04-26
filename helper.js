@@ -3,16 +3,6 @@
 const { set } = require("express/lib/application");
 let fs = require("fs")
 
-//This will calculate the mid value
-function getMid(datesBidAskContents){
-    let midVals = [];
-    for(let i = 0; i < datesBidAskContents.length; i++){
-        let mid = (parseFloat(datesBidAskContents[i].bid) + parseFloat(datesBidAskContents[i].ask)) / 2;
-        midVals.push(mid);
-    }
-    return midVals
-}
-
 function getSplitAmount(splitFactorContents){
     let splitAmount = [];
     for(let i = 0; i < splitFactorContents.length; i++){
@@ -26,6 +16,7 @@ function getSplitAmount(splitFactorContents){
     return splitAmount;
 }
 
+//The split factor column
 function getSplitFactor(splitFactorContents, splitAmount){
     let splitFactor = [1];
     for(let i = 1; i < splitFactorContents.length; i++){
@@ -57,6 +48,7 @@ function getInitialInvestment(dataContents){
     return dataContents[0].nonAdjustedClose * 100;
 }
 
+//The option purchase price column
 function getOptionPurchasePrice(datesBidAskContents, exDates){
     let purchasePrice = new Map();
     for(let i = 0; i < datesBidAskContents.length; i++){
@@ -88,6 +80,7 @@ function getOpenOptionValueAtEndOfDay(datesBidAskContents, splitFactor){
 
 }
 
+//The prior month terminal value column
 function getPriorMonthTerminalValue(end, strike, splitAdj, equal){
     if(equal){
         if(0 > (end - strike)){
@@ -177,10 +170,6 @@ function getCashAtBeginningOfDay(liborContents, dataContents, datesBidAskContent
                     sum += (terminalValue * 100 * priorMonthSplitValue);
                     proceedsFromExpiringOption.push(terminalValue * 100 * priorMonthSplitValue);
                     csvProceedsFromExpiringOption.push(terminalValue * 100 * priorMonthSplitValue);
-
-              //      sum += (terminalValue * 100);
-              //      proceedsFromExpiringOption.push(terminalValue * 100);
-             //       csvProceedsFromExpiringOption.push(terminalValue * 100);
            
                     strikeIndex += 1;
                 }
@@ -203,6 +192,7 @@ function getAccountValueAtEndOfDay(cashAtEndOfDay, openOptionVal){
     return accountVal;
 }
 
+//The get cash cash at the end of the day spreadsheet column
 function getCashAtEndOfDay(cashAtBeginOfDay, proceedsFromExpiringOption, optionInvestment, datesBidAskContents, splitFactor, priorMonthSplitArr){
     let day = undefined;
     let cashAtEndOfDay = [];
@@ -246,16 +236,7 @@ function getTotalReturnIndex(dataContents){
     return totalReturn;
 }
 
-//This will map the dates to the two indexes.  This is what will be returned to the frontend
-function mapDaysToIndexes(dataContents, optionBuyingIndex, totalReturnIndex){
-    let indexMap = new Map()
-
-    for(let i = 0; i < dataContents.length; i++){
-        indexMap.set(dataContents[i].date, {optionIndex: optionBuyingIndex[i], totReturnIndex: totalReturnIndex[i]})
-    }
-    return indexMap
-}
-
+//Return the indexes and dates as required by the front end
 function returnSetUp(datesBidAskContents, optionBuyingIndex, totalReturnIndex) {
     let dateArray = [];
     for(let i = 0; i < datesBidAskContents.length; i++){
@@ -275,8 +256,9 @@ function returnSetUp(datesBidAskContents, optionBuyingIndex, totalReturnIndex) {
 }
 
 //This is the conglomerate function which will be the pipeline of the data processing
-function dataReception(splitFactorContents, strikeContents, datesBidAskContents, dataContents, idAndIssuerContents, expContents, liborContents, exDates){
- 
+function dataReception(splitFactorContents, strikeContents, datesBidAskContents, dataContents, liborContents, exDates){
+
+    //These return values all correspond to a column from the spreadsheet
     let splitAmount = getSplitAmount(splitFactorContents);
     let splitFactor = getSplitFactor(splitFactorContents, splitAmount);
     let calendarDays = getCalendarDays(datesBidAskContents);
@@ -302,6 +284,7 @@ function dataReception(splitFactorContents, strikeContents, datesBidAskContents,
     }
     })
 
+    // -----------------------------This is the beginning of the .CSV contents------------------------------------------------------
     let csvContent = "";
     let it = 0;
     let flag = false;
@@ -324,6 +307,8 @@ function dataReception(splitFactorContents, strikeContents, datesBidAskContents,
             return
         }
     })
+
+    //-------------------------------This is the end of the .CSV contents----------------------------------------------------------------------------
 
    return returnSetUp(datesBidAskContents, optionBuyingIndex, totalReturnIndex);
 }
