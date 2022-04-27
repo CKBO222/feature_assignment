@@ -277,6 +277,8 @@ function dataReception(splitFactorContents, strikeContents, datesBidAskContents,
 
     const content = 'Date, Option ID, Strike, Close, Total Return, Split Amount, Split Factor, Calendar Days, Bid, Ask, Libor, Cash at Beginning of Day, Proceeds From Expiring Option, Interest, Open Option Value, Cash At End of Day, Account Val at End of Day, Option Buying Index, Total Return Index' + "\n";
 
+    // -----------------------------This is the beginning of the .CSV contents------------------------------------------------------
+    
     fs.writeFile('files/spreadsheet.csv', content, err => {
     if (err) {
         console.error(err)
@@ -284,7 +286,6 @@ function dataReception(splitFactorContents, strikeContents, datesBidAskContents,
     }
     })
 
-    // -----------------------------This is the beginning of the .CSV contents------------------------------------------------------
     let csvContent = "";
     let it = 0;
     let flag = false;
