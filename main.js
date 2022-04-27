@@ -102,17 +102,20 @@ async function getData(ticker, start, end) {
 				expire,
 			]);
 
-			if (i + 0 < strikeContents.length) {
+			if (i < strikeContents.length) {
+
+				//Shift the expiration dates
 				let expire2 = new Date(expire);
 				let splitExpire = undefined;
 
-				if (
-					i + 1 < strikeContents.length &&
-					exDates.has(expire2.toDateString())
-				) {
+				if ( i + 1 < strikeContents.length && exDates.has(expire2.toDateString()) ) {
+
 					splitExpire = expire2.setDate(expire2.getDate() - 1);
 					splitExpire = new Date(splitExpire);
-				} else {
+
+				} 
+				
+				else {
 					splitExpire = expire;
 				}
 
@@ -127,14 +130,7 @@ async function getData(ticker, start, end) {
 
 			begin = expire;
 
-			if (
-				i < strikeContents.length - 1 &&
-				exDates.has(
-					new Date(
-						dbaContents[0][dbaContents[0].length - 1].date_
-					).toDateString()
-				)
-			) {
+			if ( i < strikeContents.length - 1 && exDates.has(new Date( dbaContents[0][dbaContents[0].length - 1].date_ ).toDateString() ) ) {
 				dbaContents[0].pop();
 			}
 			datesBidAskContentsNested.push(dbaContents[0]);
